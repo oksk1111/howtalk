@@ -1,0 +1,55 @@
+---
+alwaysApply: true
+description: "Talk-Wiz 메신저 앱 프로젝트 구조 및 아키텍처 가이드"
+---
+
+# Talk-Wiz 프로젝트 구조 가이드
+
+이 프로젝트는 AI 기능을 포함한 실시간 메신저 애플리케이션입니다.
+
+## 🏗️ 메인 진입점 및 핵심 파일
+
+- **메인 진입점**: [src/main.tsx](mdc:src/main.tsx) - React 앱의 시작점
+- **앱 컴포넌트**: [src/App.tsx](mdc:src/App.tsx) - 라우팅 및 전역 컨텍스트 설정
+- **메인 페이지**: [src/pages/Index.tsx](mdc:src/pages/Index.tsx) - 인증된 사용자의 메인 대시보드
+
+## 📁 주요 디렉토리 구조
+
+### 컴포넌트 구조
+- **페이지 컴포넌트**: `src/pages/` - 라우트별 페이지 컴포넌트
+- **비즈니스 컴포넌트**: `src/components/` - 메신저 앱 핵심 컴포넌트
+- **UI 컴포넌트**: `src/components/ui/` - shadcn/ui 기반 재사용 가능한 UI 컴포넌트
+
+### 상태 및 로직 관리
+- **커스텀 훅**: `src/hooks/` - 재사용 가능한 로직 (인증, 토스트 등)
+- **유틸리티**: `src/lib/` - 공통 헬퍼 함수 ([src/lib/utils.ts](mdc:src/lib/utils.ts))
+
+### 백엔드 통합
+- **Supabase 통합**: `src/integrations/supabase/` 
+  - 클라이언트 설정: [src/integrations/supabase/client.ts](mdc:src/integrations/supabase/client.ts)
+  - 타입 정의: [src/integrations/supabase/types.ts](mdc:src/integrations/supabase/types.ts)
+
+## 🗄️ 데이터베이스 스키마
+
+메신저 기능을 위한 5개 주요 테이블:
+1. **profiles** - 사용자 프로필 정보
+2. **chat_rooms** - 채팅방 (개인/그룹)
+3. **chat_participants** - 채팅방 참여자 관계
+4. **messages** - 메시지 (AI 페르소나 지원)
+5. **friendships** - 친구 관계 관리
+
+## 🎨 스타일링 시스템
+
+- **글로벌 스타일**: [src/index.css](mdc:src/index.css) - Tailwind 및 CSS 변수 정의
+- **설정 파일**: [tailwind.config.ts](mdc:tailwind.config.ts) - Tailwind 커스터마이징
+- **컴포넌트 설정**: [components.json](mdc:components.json) - shadcn/ui 설정
+
+## 🔧 설정 파일들
+
+- **Vite 설정**: [vite.config.ts](mdc:vite.config.ts) - 빌드 도구 및 개발 서버 설정
+- **TypeScript**: [tsconfig.json](mdc:tsconfig.json) - 타입 체크 및 경로 별칭 설정
+- **의존성**: [package.json](mdc:package.json) - 프로젝트 의존성 및 스크립트
+
+## 📱 메신저 앱 핵심 컴포넌트
+
+메인 메신저 인터페이스는 [src/components/MessengerApp.tsx](mdc:src/components/MessengerApp.tsx)에서 구현됩니다.

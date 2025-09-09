@@ -1,0 +1,234 @@
+---
+alwaysApply: true
+---
+# React 컴포넌트 가이드라인
+
+## 🏗️ 컴포넌트 구조 패턴
+
+### 표준 컴포넌트 템플릿
+```typescript
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { MessageSquare } from 'lucide-react';
+
+interface ComponentNameProps {
+  // props 타입 정의
+}
+
+const ComponentName: React.FC<ComponentNameProps> = ({ 
+  /* destructured props */ 
+}) => {
+  // 1. 훅 호출 (상태, 컨텍스트, 커스텀 훅)
+  const [state, setState] = useState<Type>(initialValue);
+  const { user } = useAuth();
+  
+  // 2. 이펙트 훅들
+  useEffect(() => {
+    // 부수 효과
+  }, [dependencies]);
+  
+  // 3. 이벤트 핸들러들
+  const handleAction = () => {
+    // 핸들러 로직
+  };
+  
+  // 4. 조건부 렌더링 로직
+  if (loading) {
+    return <LoadingComponent />;
+  }
+  
+  // 5. 메인 JSX 반환
+  return (
+    <div className="component-container">
+      {/* JSX 내용 */}
+    </div>
+  );
+};
+
+export default ComponentName;
+```
+
+## 📁 컴포넌트 분류 및 배치
+
+### 페이지 컴포넌트 (`src/pages/`)
+- **목적**: 라우트별 최상위 페이지
+- **예시**: [src/pages/Index.tsx](mdc:src/pages/Index.tsx), [src/pages/Auth.tsx](mdc:src/pages/Auth.tsx)
+- **특징**: 인증 가드, 레이아웃 설정, 비즈니스 로직 오케스트레이션
+
+### 비즈니스 컴포넌트 (`src/components/`)
+- **목적**: 앱 특화 기능 컴포넌트
+- **예시**: [src/components/MessengerApp.tsx](mdc:src/components/MessengerApp.tsx)
+- **특징**: 복잡한 상태 관리, 다중 UI 컴포넌트 조합
+
+### UI 컴포넌트 (`src/components/ui/`)
+- **목적**: 재사용 가능한 기본 UI 요소
+- **예시**: [src/components/ui/button.tsx](mdc:src/components/ui/button.tsx)
+- **특징**: shadcn/ui 기반, props로 변형 제어
+
+## 🎯 컴포넌트 작성 베스트 프랙티스
+
+### 1. Props 인터페이스 정의
+```typescript
+// 명확하고 구체적인 Props 타입
+interface MessengerSidebarProps {
+  activeTab: 'chats' | 'friends';
+  onTabChange: (tab: 'chats' | 'friends') => void;
+  user: User;
+  chatRooms?: ChatRoom[];
+  className?: string;
+}
+```
+
+### 2. 이벤트 핸들러 명명
+```typescript
+// handle + Action 패턴 사용
+const handleSignOut = async () => { };
+const handleTabChange = (tab: string) => { };
+const handleMessageSend = (message: string) => { };
+const handleUserSelect = (userId: string) => { };
+```
+
+### 3. 조건부 렌더링 패턴
+```typescript
+// 로딩 상태
+if (loading) {
+  return (
+    <div className="flex items-center justify-center">
+      <MessageSquare className="h-12 w-12 animate-pulse" />
+      <p>로딩 중...</p>
+    </div>
+  );
+}
+
+// 에러 상태
+if (error) {
+  return (
+    <div className="text-center text-destructive">
+      <p>오류가 발생했습니다: {error.message}</p>
+    </div>
+  );
+}
+
+// 빈 상태
+if (!data || data.length === 0) {
+  return (
+    <div className="text-center py-8 text-muted-foreground">
+      <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+      <p>아직 데이터가 없습니다</p>
+    </div>
+  );
+}
+```
+
+## 🔗 훅 사용 가이드라인
+
+### 커스텀 훅 활용
+```typescript
+// 인증 상태 확인
+const { user, loading, signOut } = useAuth();
+
+// 토스트 알림
+const { toast } = useToast();
+
+// 모바일 감지
+const isMobile = useMobile();
+```
+
+### 상태 관리 패턴
+```typescript
+// 단순 상태: useState
+const [activeTab, setActiveTab] = useState<'chats' | 'friends'>('chats');
+
+// 복잡한 상태: useReducer 고려
+const [state, dispatch] = useReducer(chatReducer, initialState);
+
+// 서버 상태: TanStack Query 활용 (향후 구현)
+// const { data, isLoading } = useQuery(['messages', roomId], fetchMessages);
+```
+
+## 🎨 스타일링 컨벤션
+
+### Tailwind CSS 클래스 순서
+```typescript
+// 레이아웃 → 크기 → 스타일 → 상태
+<div className="flex items-center justify-between w-full h-12 px-4 bg-card border-b hover:bg-accent">
+  {/* 내용 */}
+</div>
+```
+
+### 조건부 스타일링
+```typescript
+import { cn } from '@/lib/utils';
+
+// clsx와 tailwind-merge 활용
+<Button 
+  className={cn(
+    "w-full",
+    variant === "destructive" && "bg-destructive text-destructive-foreground",
+    disabled && "opacity-50 cursor-not-allowed"
+  )}
+/>
+```
+
+## 🔄 상태 업데이트 패턴
+
+### 불변성 유지
+```typescript
+// 객체 상태 업데이트
+setUser(prev => ({ ...prev, status: 'online' }));
+
+// 배열 상태 업데이트  
+setMessages(prev => [...prev, newMessage]);
+setMessages(prev => prev.filter(msg => msg.id !== messageId));
+```
+
+### 비동기 작업 처리
+```typescript
+const handleAsyncAction = async () => {
+  setLoading(true);
+  try {
+    const result = await someAsyncOperation();
+    setData(result);
+    toast({
+      title: "성공",
+      description: "작업이 완료되었습니다."
+    });
+  } catch (error) {
+    toast({
+      title: "오류",
+      description: error.message,
+      variant: "destructive"
+    });
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+## 📱 접근성 및 UX 고려사항
+
+### 키보드 내비게이션
+```typescript
+// 키보드 이벤트 처리
+const handleKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSubmit();
+  }
+};
+```
+
+### 로딩 및 피드백 상태
+```typescript
+// 사용자 피드백 제공
+<Button disabled={loading}>
+  {loading ? "처리 중..." : "전송"}
+</Button>
+
+// 아이콘으로 시각적 피드백
+<MessageSquare className={cn(
+  "h-4 w-4",
+  loading && "animate-pulse"
+)} />
+```

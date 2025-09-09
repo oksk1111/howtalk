@@ -1,0 +1,273 @@
+---
+alwaysApply: true
+---
+# UI 스타일링 및 디자인 시스템
+
+## 🎨 디자인 시스템 기반
+
+### CSS 변수 활용
+**모든 색상은 [src/index.css](mdc:src/index.css)에 정의된 CSS 변수를 사용:**
+
+```typescript
+// ✅ 올바른 색상 사용 (CSS 변수 기반)
+<div className="bg-background text-foreground border-border">
+  <h1 className="text-primary">제목</h1>
+  <p className="text-muted-foreground">설명</p>
+</div>
+
+// ❌ 하드코딩된 색상 사용 금지
+<div className="bg-white text-black border-gray-200">
+```
+
+### 지원되는 색상 팔레트
+```css
+/* 기본 색상 */
+--background, --foreground
+--card, --card-foreground  
+--primary, --primary-foreground
+--secondary, --secondary-foreground
+--muted, --muted-foreground
+--accent, --accent-foreground
+--destructive, --destructive-foreground
+
+/* 인터랙티브 요소 */
+--border, --input, --ring
+
+/* 사이드바 전용 */
+--sidebar-background, --sidebar-foreground
+--sidebar-primary, --sidebar-accent
+```
+
+## 🧩 shadcn/ui 컴포넌트 사용
+
+### 기본 UI 컴포넌트 임포트
+```typescript
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+```
+
+### 컴포넌트 변형 활용
+```typescript
+// Button 변형
+<Button variant="default">기본 버튼</Button>
+<Button variant="secondary">보조 버튼</Button>
+<Button variant="outline">아웃라인 버튼</Button>
+<Button variant="ghost">고스트 버튼</Button>
+<Button variant="destructive">삭제 버튼</Button>
+
+// 크기 조절
+<Button size="sm">작은 버튼</Button>
+<Button size="default">기본 버튼</Button>
+<Button size="lg">큰 버튼</Button>
+<Button size="icon">아이콘 버튼</Button>
+```
+
+## 🎯 레이아웃 패턴
+
+### 플렉스박스 레이아웃
+```typescript
+// 가로 정렬
+<div className="flex items-center justify-between">
+  <span>왼쪽 내용</span>
+  <span>오른쪽 내용</span>
+</div>
+
+// 세로 정렬
+<div className="flex flex-col space-y-4">
+  <div>첫 번째 요소</div>
+  <div>두 번째 요소</div>
+</div>
+
+// 센터 정렬
+<div className="flex items-center justify-center min-h-screen">
+  <div>중앙 배치 내용</div>
+</div>
+```
+
+### 그리드 레이아웃
+```typescript
+// 반응형 그리드
+<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  {items.map(item => (
+    <Card key={item.id}>카드 내용</Card>
+  ))}
+</div>
+
+// 고정 비율 그리드
+<div className="grid grid-cols-12 gap-4">
+  <div className="col-span-8">메인 콘텐츠</div>
+  <div className="col-span-4">사이드바</div>
+</div>
+```
+
+## 📱 반응형 디자인
+
+### 브레이크포인트 활용
+```typescript
+// Tailwind 브레이크포인트: sm(640px), md(768px), lg(1024px), xl(1280px), 2xl(1536px)
+<div className="w-full md:w-80 lg:w-96">
+  <div className="p-4 md:p-6 lg:p-8">
+    <h1 className="text-lg md:text-xl lg:text-2xl">반응형 제목</h1>
+  </div>
+</div>
+
+// 모바일 우선 디자인
+<div className="flex flex-col md:flex-row">
+  <aside className="w-full md:w-80">사이드바</aside>
+  <main className="flex-1">메인 콘텐츠</main>
+</div>
+```
+
+### 모바일 감지 훅 활용
+```typescript
+import { useMobile } from '@/hooks/use-mobile';
+
+const Component = () => {
+  const isMobile = useMobile();
+  
+  return (
+    <div className={cn(
+      "p-4",
+      isMobile ? "pb-safe" : "p-6"
+    )}>
+      {isMobile ? <MobileView /> : <DesktopView />}
+    </div>
+  );
+};
+```
+
+## 🎨 상태별 스타일링
+
+### 인터랙티브 상태
+```typescript
+// 호버, 포커스, 액티브 상태
+<Button className="hover:bg-accent focus:ring-2 focus:ring-ring active:scale-95 transition-all">
+  인터랙티브 버튼
+</Button>
+
+// 비활성화 상태
+<Button 
+  disabled={loading}
+  className="disabled:opacity-50 disabled:cursor-not-allowed"
+>
+  {loading ? "로딩 중..." : "전송"}
+</Button>
+```
+
+### 조건부 스타일링
+```typescript
+import { cn } from '@/lib/utils';
+
+// 동적 클래스 조합
+<div className={cn(
+  "base-classes",
+  isActive && "bg-primary text-primary-foreground",
+  hasError && "border-destructive text-destructive",
+  disabled && "opacity-50 pointer-events-none"
+)}>
+```
+
+## 🖼️ 아이콘 및 이미지
+
+### Lucide React 아이콘
+```typescript
+import { 
+  MessageSquare, 
+  Users, 
+  Plus, 
+  Settings, 
+  LogOut,
+  ChevronDown 
+} from 'lucide-react';
+
+// 아이콘 크기 및 스타일
+<MessageSquare className="h-4 w-4 text-muted-foreground" />
+<Users className="h-6 w-6 text-primary" />
+<Plus className="h-8 w-8 text-accent-foreground" />
+
+// 애니메이션 아이콘
+<MessageSquare className="h-12 w-12 animate-pulse text-primary" />
+<ChevronDown className="h-4 w-4 transition-transform group-data-[state=open]:rotate-180" />
+```
+
+### 아바타 및 이미지
+```typescript
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+
+// 사용자 아바타
+<Avatar>
+  <AvatarImage src={user.avatar_url} alt={user.display_name} />
+  <AvatarFallback>
+    {user.display_name?.charAt(0).toUpperCase()}
+  </AvatarFallback>
+</Avatar>
+```
+
+## 🌙 다크 모드 지원
+
+### 다크 모드 클래스
+```typescript
+// CSS 변수가 자동으로 다크 모드 색상으로 전환됨
+<div className="bg-background text-foreground">
+  <Card className="bg-card text-card-foreground">
+    <h2 className="text-primary">제목</h2>
+    <p className="text-muted-foreground">설명</p>
+  </Card>
+</div>
+```
+
+## 🚨 일관성 및 접근성
+
+### 간격 및 크기 표준화
+```typescript
+// 표준 간격 (4px 단위)
+<div className="space-y-4">  {/* 16px */}
+  <div className="p-4">     {/* 16px padding */}
+    <div className="mb-2">  {/* 8px margin-bottom */}
+      <div className="gap-2"> {/* 8px gap */}
+```
+
+### 포커스 및 접근성
+```typescript
+// 키보드 내비게이션 지원
+<Button className="focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+  접근 가능한 버튼
+</Button>
+
+// 스크린 리더 지원
+<Button aria-label="메뉴 열기">
+  <Menu className="h-4 w-4" />
+  <span className="sr-only">메뉴</span>
+</Button>
+```
+
+### 시각적 계층 구조
+```typescript
+// 텍스트 크기 계층
+<h1 className="text-4xl font-bold">메인 제목</h1>
+<h2 className="text-2xl font-semibold">섹션 제목</h2>
+<h3 className="text-lg font-medium">서브 제목</h3>
+<p className="text-base">본문 텍스트</p>
+<span className="text-sm text-muted-foreground">보조 텍스트</span>
+<small className="text-xs text-muted-foreground">작은 텍스트</small>
+```
+
+## 🎭 애니메이션 및 전환
+
+### 기본 전환 효과
+```typescript
+// 부드러운 전환
+<div className="transition-all duration-200 ease-in-out">
+  <Button className="transform hover:scale-105 transition-transform">
+    호버 효과
+  </Button>
+</div>
+
+// 페이드 인/아웃
+<div className="animate-in fade-in duration-300">
+  나타나는 요소
+</div>
+```

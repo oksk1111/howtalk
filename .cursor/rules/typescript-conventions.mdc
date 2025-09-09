@@ -1,0 +1,181 @@
+---
+alwaysApply: true
+---
+# TypeScript 코딩 컨벤션
+
+## 📝 기본 규칙
+
+### 임포트 순서 및 스타일
+```typescript
+// 1. 외부 라이브러리 (React, 서드파티)
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// 2. 내부 모듈 (절대 경로 사용)
+import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
+
+// 3. 타입 임포트 (별도 그룹)
+import type { User } from '@supabase/supabase-js';
+import type { Database } from '@/integrations/supabase/types';
+```
+
+### 절대 경로 사용 규칙
+**항상 `@/` 별칭을 사용하세요:**
+```typescript
+// ✅ 좋은 예
+import { useAuth } from '@/hooks/useAuth';
+import { MessengerApp } from '@/components/MessengerApp';
+
+// ❌ 나쁜 예
+import { useAuth } from '../hooks/useAuth';
+import { MessengerApp } from './MessengerApp';
+```
+
+## 🏷️ 네이밍 컨벤션
+
+### 파일명
+- **컴포넌트**: `PascalCase.tsx` (예: `MessengerApp.tsx`)
+- **훅**: `camelCase.tsx` with `use` prefix (예: `useAuth.tsx`)
+- **유틸리티**: `camelCase.ts` (예: `utils.ts`)
+- **타입 파일**: `camelCase.ts` (예: `types.ts`)
+
+### 변수 및 함수명
+```typescript
+// 컴포넌트: PascalCase
+const MessengerApp = () => { };
+
+// 함수 및 변수: camelCase  
+const handleSignIn = async () => { };
+const isLoading = useState(false);
+
+// 상수: UPPER_SNAKE_CASE
+const SUPABASE_URL = "https://...";
+const MAX_MESSAGE_LENGTH = 1000;
+
+// 타입 및 인터페이스: PascalCase
+interface AuthContextType {
+  user: User | null;
+}
+
+type MessageType = 'text' | 'image' | 'ai_generated';
+```
+
+## 🔒 타입 안전성 규칙
+
+### 명시적 타입 정의
+```typescript
+// 함수 매개변수와 반환 타입 명시
+const signIn = async (email: string, password: string): Promise<{ error: any }> => {
+  // 구현
+};
+
+// 상태 타입 명시
+const [user, setUser] = useState<User | null>(null);
+const [loading, setLoading] = useState<boolean>(false);
+```
+
+### Supabase 타입 활용
+```typescript
+// Database 타입 임포트 및 활용
+import type { Database } from '@/integrations/supabase/types';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+```
+
+### 에러 처리 패턴
+```typescript
+// 에러 타입 명시적 처리
+try {
+  const { data, error } = await supabase.from('messages').select('*');
+  if (error) throw error;
+  return data;
+} catch (error: any) {
+  console.error('Message fetch error:', error);
+  return null;
+}
+```
+
+## 🎯 컴포넌트 타입 정의
+
+### Props 인터페이스
+```typescript
+// Props 인터페이스는 컴포넌트명 + Props
+interface MessengerAppProps {
+  userId: string;
+  onMessageSent?: (message: string) => void;
+  className?: string;
+}
+
+const MessengerApp: React.FC<MessengerAppProps> = ({ 
+  userId, 
+  onMessageSent,
+  className 
+}) => {
+  // 구현
+};
+```
+
+### 이벤트 핸들러 타입
+```typescript
+// React 이벤트 타입 명시
+const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault();
+  // 구현
+};
+
+const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setValue(e.target.value);
+};
+```
+
+## 🔄 비동기 처리 규칙
+
+### async/await 패턴
+```typescript
+// Promise 체이닝 대신 async/await 사용
+const fetchUserData = async (userId: string): Promise<Profile | null> => {
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+    
+    if (error) throw error;
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch user:', error);
+    return null;
+  }
+};
+```
+
+## 📚 JSDoc 주석 규칙
+
+```typescript
+/**
+ * 사용자 인증을 관리하는 커스텀 훅
+ * @returns 인증 상태 및 관련 함수들
+ */
+export const useAuth = (): AuthContextType => {
+  // 구현
+};
+
+/**
+ * 메시지를 전송하는 함수
+ * @param content - 메시지 내용
+ * @param roomId - 채팅방 ID
+ * @param aiPersona - AI 페르소나 (선택사항)
+ * @returns 전송 결과
+ */
+const sendMessage = async (
+  content: string, 
+  roomId: string, 
+  aiPersona?: string
+): Promise<boolean> => {
+  // 구현
+};
+```

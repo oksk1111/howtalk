@@ -1,0 +1,298 @@
+---
+alwaysApply: true
+---
+# Supabase 통합 가이드
+
+## 🔧 Supabase 클라이언트 설정
+
+### 클라이언트 인스턴스
+**모든 Supabase 작업은 [src/integrations/supabase/client.ts](mdc:src/integrations/supabase/client.ts)에서 export된 클라이언트를 사용:**
+
+```typescript
+import { supabase } from '@/integrations/supabase/client';
+
+// ✅ 올바른 사용법
+const { data, error } = await supabase.from('messages').select('*');
+
+// ❌ 새로운 클라이언트 인스턴스 생성 금지
+// const client = createClient(url, key);
+```
+
+### 타입 안전성 보장
+**[src/integrations/supabase/types.ts](mdc:src/integrations/supabase/types.ts)의 타입을 항상 활용:**
+
+```typescript
+import type { Database } from '@/integrations/supabase/types';
+
+// 테이블 타입 추출
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type MessageInsert = Database['public']['Tables']['messages']['Insert'];
+type ChatRoom = Database['public']['Tables']['chat_rooms']['Row'];
+```
+
+## 🗄️ 데이터베이스 스키마 및 관계
+
+### 핵심 테이블 구조
+1. **profiles** - 사용자 프로필
+2. **chat_rooms** - 채팅방 (개인/그룹)
+3. **chat_participants** - 채팅방 참여자
+4. **messages** - 메시지 (AI 페르소나 지원)
+5. **friendships** - 친구 관계
+
+### 관계형 쿼리 패턴
+```typescript
+// 채팅방과 참여자 조인
+const { data: chatRooms } = await supabase
+  .from('chat_rooms')
+  .select(`
+    *,
+    chat_participants (
+      user_id,
+      profiles (
+        display_name,
+        avatar_url
+      )
+    )
+  `)
+  .eq('created_by', userId);
+
+// 메시지와 발신자 정보 조인
+const { data: messages } = await supabase
+  .from('messages')
+  .select(`
+    *,
+    profiles:sender_id (
+      display_name,
+      avatar_url
+    )
+  `)
+  .eq('room_id', roomId)
+  .order('created_at', { ascending: true });
+```
+
+## 🔐 인증 시스템 패턴
+
+### 인증 상태 관리
+**[src/hooks/useAuth.tsx](mdc:src/hooks/useAuth.tsx) 훅을 통해 인증 처리:**
+
+```typescript
+import { useAuth } from '@/hooks/useAuth';
+
+// 컴포넌트에서 인증 상태 확인
+const { user, session, loading, signIn, signUp, signOut } = useAuth();
+
+// 로그인 처리
+const handleSignIn = async (email: string, password: string) => {
+  const { error } = await signIn(email, password);
+  if (error) {
+    // 에러 처리
+  }
+};
+```
+
+### 인증 가드 패턴
+```typescript
+// 페이지 컴포넌트에서 인증 확인
+const { user, loading } = useAuth();
+const navigate = useNavigate();
+
+useEffect(() => {
+  if (!loading && !user) {
+    navigate('/auth');
+  }
+}, [user, loading, navigate]);
+
+if (loading) return <LoadingComponent />;
+if (!user) return <AuthPrompt />;
+```
+
+## 📨 실시간 데이터 구독
+
+### 실시간 메시지 구독
+```typescript
+// 채팅방 메시지 실시간 구독
+useEffect(() => {
+  if (!roomId) return;
+
+  const channel = supabase
+    .channel(`room-${roomId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'messages',
+        filter: `room_id=eq.${roomId}`
+      },
+      (payload) => {
+        setMessages(prev => [...prev, payload.new as Message]);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+}, [roomId]);
+```
+
+### 사용자 상태 구독
+```typescript
+// 친구 온라인 상태 구독
+useEffect(() => {
+  const channel = supabase
+    .channel('user-status')
+    .on(
+      'postgres_changes',
+      {
+        event: 'UPDATE',
+        schema: 'public',
+        table: 'profiles',
+        filter: `user_id=in.(${friendIds.join(',')})`
+      },
+      (payload) => {
+        updateFriendStatus(payload.new);
+      }
+    )
+    .subscribe();
+
+  return () => supabase.removeChannel(channel);
+}, [friendIds]);
+```
+
+## 💾 데이터 조작 패턴
+
+### 메시지 전송
+```typescript
+const sendMessage = async (
+  content: string, 
+  roomId: string, 
+  aiPersona?: string
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('messages')
+      .insert({
+        content,
+        room_id: roomId,
+        sender_id: user.id,
+        message_type: aiPersona ? 'ai_generated' : 'text',
+        ai_persona: aiPersona
+      });
+
+    if (error) throw error;
+    return true;
+  } catch (error) {
+    console.error('Failed to send message:', error);
+    return false;
+  }
+};
+```
+
+### 채팅방 생성
+```typescript
+const createChatRoom = async (
+  participantIds: string[], 
+  isGroup: boolean = false,
+  name?: string
+): Promise<string | null> => {
+  try {
+    // 채팅방 생성
+    const { data: room, error: roomError } = await supabase
+      .from('chat_rooms')
+      .insert({
+        created_by: user.id,
+        is_group: isGroup,
+        name: name || null
+      })
+      .select()
+      .single();
+
+    if (roomError) throw roomError;
+
+    // 참여자 추가
+    const participants = participantIds.map(userId => ({
+      room_id: room.id,
+      user_id: userId
+    }));
+
+    const { error: participantsError } = await supabase
+      .from('chat_participants')
+      .insert(participants);
+
+    if (participantsError) throw participantsError;
+
+    return room.id;
+  } catch (error) {
+    console.error('Failed to create chat room:', error);
+    return null;
+  }
+};
+```
+
+## 🔍 쿼리 최적화 가이드
+
+### 효율적인 데이터 페칭
+```typescript
+// 필요한 필드만 선택
+const { data } = await supabase
+  .from('profiles')
+  .select('user_id, display_name, avatar_url, status')
+  .in('user_id', userIds);
+
+// 페이지네이션 적용
+const { data } = await supabase
+  .from('messages')
+  .select('*')
+  .eq('room_id', roomId)
+  .order('created_at', { ascending: false })
+  .range(offset, offset + limit);
+
+// 인덱스 활용을 위한 필터 순서
+const { data } = await supabase
+  .from('messages')
+  .select('*')
+  .eq('room_id', roomId)  // 인덱스가 있는 필드 우선
+  .eq('message_type', 'text')
+  .gte('created_at', startDate);
+```
+
+## 🚨 에러 처리 패턴
+
+### 표준 에러 처리
+```typescript
+const performDatabaseOperation = async () => {
+  try {
+    const { data, error } = await supabase
+      .from('table_name')
+      .insert(payload);
+
+    if (error) {
+      // Supabase 에러 처리
+      if (error.code === '23505') {
+        throw new Error('이미 존재하는 데이터입니다.');
+      }
+      throw new Error(error.message);
+    }
+
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('Database operation failed:', error);
+    return { success: false, error: error.message };
+  }
+};
+```
+
+### RLS (Row Level Security) 준수
+```typescript
+// 사용자별 데이터 접근 제한 확인
+const fetchUserMessages = async (userId: string) => {
+  // RLS 정책에 의해 자동으로 사용자 권한 확인됨
+  const { data, error } = await supabase
+    .from('messages')
+    .select('*')
+    .eq('sender_id', userId);  // RLS로 접근 제어됨
+
+  return { data, error };
+};
+```
