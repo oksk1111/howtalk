@@ -1,0 +1,169 @@
+{
+    "designSystem": {
+      "componentStyles": {
+        "panelContainers": {
+          "surfaceColor": "#2C2338",
+          "borderTreatment": "none",
+          "radius": "20px",
+          "elevationShadow": "0 6px 24px rgba(22,17,29,0.42)",
+          "contentElements": {
+            "iconRendering": {
+              "fillColor": "#FC87B2",
+              "containerStyle": "#24193B"
+            },
+            "avatarContainer": {
+              "surfaceColor": "#24193B",
+              "border": "2px solid #322249"
+            }
+          }
+        },
+        "contentCards": {
+          "surfaceColor": "#312142",
+          "radius": "18px",
+          "elevationShadow": "0 2px 12px rgba(40,31,55,0.15)",
+          "borderTreatment": "none"
+        },
+        "navigation": {
+          "background": "#221733",
+          "activeIndicatorColor": "#FC87B2",
+          "inactiveIndicatorColor": "#8991B7",
+          "iconColor": "#FC87B2",
+          "hoverIconColor": "#E570A0"
+        },
+        "chatHeader": {
+          "surfaceColor": "transparent",
+          "titleColor": "#FFFFFF",
+          "statusColor": "#B2B9D1"
+        },
+        "sidePanel": {
+          "surfaceColor": "#201532",
+          "borderTreatment": "none"
+        },
+        "chatBubble": {
+          "userBubbleBackground": "linear-gradient(90deg, #FC87B2 0%, #FF9AE3 100%)",
+          "userTextColor": "#331D43",
+          "otherBubbleBackground": "#25183A",
+          "otherTextColor": "#D3C6E3",
+          "timestampColor": "#B2B9D1"
+        },
+        "inlineButtons": {
+          "primaryAction": {
+            "surfaceColor": "linear-gradient(92deg, #FC87B2 0%, #FF9AE3 100%)",
+            "textColor": "#342145",
+            "hoverSurface": "#E570A0"
+          },
+          "utilityButton": {
+            "surfaceColor": "#33254C",
+            "textColor": "#DFCEEC",
+            "hoverSurface": "#201533"
+          },
+          "iconButton": {
+            "surfaceColor": "transparent",
+            "iconColor": "#FC87B2",
+            "hoverIconColor": "#FF9AE3"
+          }
+        },
+        "inputFields": {
+          "background": "#24193B",
+          "textColor": "#F4EFFA",
+          "placeholderColor": "#9C93B1",
+          "focusBorder": "#FC87B2",
+          "radius": "12px"
+        },
+        "mediaAttachments": {
+          "surfaceColor": "#312142",
+          "border": "1px solid #39305A",
+          "radius": "14px"
+        },
+        "sharedList": {
+          "surfaceColor": "transparent",
+          "textColor": "#E3D6F7",
+          "iconColor": "#FC87B2"
+        },
+        "typography": {
+          "headline": "#F4EFFA",
+          "body": "#E3D6F7",
+          "secondary": "#B2B9D1",
+          "meta": "#8991B7"
+        }
+      },
+      "states": {
+        "interactiveElementStates": {
+          "default": {
+            "background": "#FC87B2",
+            "textColor": "#342145"
+          },
+          "hover": {
+            "background": "#E570A0"
+          },
+          "active": {
+            "background": "#FF9AE3"
+          },
+          "disabled": {
+            "background": "#3A2B53",
+            "textColor": "#B2B9D1"
+          }
+        },
+        "inputStates": {
+          "focus": {
+            "border": "2px solid #FC87B2"
+          }
+        },
+        "chatBubbleStates": {
+          "sent": {
+            "background": "linear-gradient(90deg, #FC87B2 0%, #FF9AE3 100%)"
+          },
+          "received": {
+            "background": "#25183A"
+          }
+        },
+        "iconStates": {
+          "default": {
+            "color": "#FC87B2"
+          },
+          "hover": {
+            "color": "#E570A0"
+          }
+        }
+      },
+      "effects": {
+        "shadows": {
+          "containerShadow": "0 6px 24px rgba(22,17,29,0.42)",
+          "cardShadow": "0 2px 12px rgba(40,31,55,0.15)",
+          "buttonShadow": "none"
+        },
+        "radius": {
+          "panels": "20px",
+          "cards": "18px",
+          "avatars": "50%",
+          "buttons": "12px"
+        },
+        "animation": {
+          "buttonHover": {
+            "transition": "background 0.18s cubic-bezier(.12,.83,.83,.98)"
+          },
+          "iconHover": {
+            "transform": "scale(1.13)",
+            "transition": "transform 0.16s cubic-bezier(.12,.83,.83,.98)"
+          }
+        },
+        "overlay": {
+          "modalBg": "rgba(30,23,44,0.85)"
+        }
+      },
+      "accessibility": {
+        "contrastRatios": {
+          "primaryActions": "≥ 4.5:1 against text",
+          "contentText": "≥ 4.5:1 against backgrounds",
+          "secondaryInfo": "≥ 3:1 minimum"
+        },
+        "preventCommonErrors": [
+          "Avoid applying gradients from user bubbles to navigation/containers.",
+          "Do not use primary action text color for body or secondary typography.",
+          "Shadow effects must be applied ONLY to containers, never to inline content.",
+          "Ensure the avatar container always uses surfaceColor #24193B and border #322249."
+        ]
+      }
+    }
+  }
+  

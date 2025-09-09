@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
-import MessengerApp from '@/components/MessengerApp';
+import EnhancedAIMessenger from '@/components/EnhancedAIMessenger';
 import { Button } from '@/components/ui/button';
 import { MessageSquare } from 'lucide-react';
 
@@ -41,7 +41,7 @@ const Index = () => {
     );
   }
 
-  return <MessengerApp />;
+  return <EnhancedAIMessenger />;
 };
 
 export default Index;
