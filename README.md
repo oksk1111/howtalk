@@ -1,73 +1,184 @@
-# Welcome to your Lovable project
+# Talk-Wiz AI Messenger
 
-## Project info
+AI-powered real-time messenger application with intelligent conversation assistance and persona-based chat features.
 
-**URL**: https://lovable.dev/projects/69d123a4-b9d8-4523-8f68-e23a29fa9c2a
+## 🚀 Features
 
-## How can I edit this code?
+- **Real-time Messaging**: Instant chat with WebSocket integration
+- **AI Persona System**: Context-aware AI assistance with different personalities
+- **Friend Management**: Add and manage friends with real-time status
+- **Group Chats**: Create and manage group conversations
+- **Modern UI**: Beautiful, responsive design with dark/light mode support
+- **Type-safe**: Full TypeScript implementation with strict type checking
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+### Frontend
+- **React 18** - Modern UI library with hooks
+- **TypeScript** - Type-safe JavaScript with strict checking
+- **Vite** - Fast build tool with HMR
+- **Tailwind CSS** - Utility-first CSS framework
+- **shadcn/ui** - Modern component library built on Radix UI
+- **Lucide React** - Beautiful SVG icons
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/69d123a4-b9d8-4523-8f68-e23a29fa9c2a) and start prompting.
+### Backend & Database
+- **Supabase** - Backend-as-a-Service with PostgreSQL
+- **Real-time Subscriptions** - Live data updates
+- **Row Level Security** - Secure data access policies
+- **Authentication** - Email/password and OAuth providers
 
-Changes made via Lovable will be committed automatically to this repo.
+### Development Tools
+- **ESLint** - Code linting and quality checks
+- **React Query** - Server state management
+- **React Router** - Client-side routing
+- **React Hook Form** - Form state management
 
-**Use your preferred IDE**
+## 📁 Project Structure
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+talk-wiz/
+├── .cursor/rules/              # Cursor AI development rules
+│   ├── project-structure.mdc   # Project architecture guide
+│   ├── typescript-conventions.mdc # TypeScript coding standards
+│   ├── react-components.mdc    # React component guidelines
+│   ├── supabase-integration.mdc # Backend integration patterns
+│   └── ui-styling.mdc          # UI/UX design system
+├── src/
+│   ├── components/             # React components
+│   │   ├── ui/                # shadcn/ui components (47 components)
+│   │   └── MessengerApp.tsx   # Main messenger interface
+│   ├── hooks/                 # Custom React hooks
+│   │   ├── useAuth.tsx        # Authentication management
+│   │   ├── use-mobile.tsx     # Mobile device detection
+│   │   └── use-toast.ts       # Toast notifications
+│   ├── integrations/          # External service integrations
+│   │   └── supabase/          # Supabase client and types
+│   ├── lib/                   # Utility libraries
+│   ├── pages/                 # Page components
+│   └── main.tsx              # Application entry point
+├── supabase/                  # Database schema and migrations
+└── public/                    # Static assets
 ```
 
-**Edit a file directly in GitHub**
+## 🗄️ Database Schema
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+The application uses 5 main tables for the messaging system:
 
-**Use GitHub Codespaces**
+1. **profiles** - User profile information
+2. **chat_rooms** - Chat rooms (individual/group)
+3. **chat_participants** - Chat room membership
+4. **messages** - Messages with AI persona support
+5. **friendships** - Friend relationship management
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🚀 Getting Started
 
-## What technologies are used for this project?
+### Prerequisites
+- Node.js 18+ 
+- npm or yarn
+- Supabase account (for backend)
 
-This project is built with:
+### Installation
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/oksk1111/talk-wiz.git
+   cd talk-wiz
+   ```
 
-## How can I deploy this project?
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
 
-Simply open [Lovable](https://lovable.dev/projects/69d123a4-b9d8-4523-8f68-e23a29fa9c2a) and click on Share -> Publish.
+3. **Environment Setup**
+   - Supabase configuration is pre-configured in the client
+   - No additional environment variables required for development
 
-## Can I connect a custom domain to my Lovable project?
+4. **Start development server**
+   ```bash
+   npm run dev
+   ```
 
-Yes, you can!
+5. **Open in browser**
+   - Navigate to `http://localhost:8080`
+   - The app will hot-reload as you make changes
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Build for Production
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```bash
+npm run build
+```
+
+The built files will be in the `dist/` directory.
+
+## 🎨 UI Components
+
+This project uses shadcn/ui components for a consistent, accessible design system:
+
+- **47 UI Components** - Buttons, inputs, dialogs, and more
+- **Accessibility First** - Built on Radix UI primitives
+- **Customizable** - Full control over styling with Tailwind CSS
+- **Dark Mode** - Automatic theme switching support
+
+## 🔧 Development Guidelines
+
+This project includes comprehensive Cursor Rules for consistent development:
+
+- **TypeScript Conventions** - Naming, imports, type safety
+- **React Component Patterns** - Structure, hooks, state management
+- **Supabase Integration** - Database operations, authentication
+- **UI Styling** - Design system, responsive design, accessibility
+
+## 🤖 AI Features
+
+- **Conversation Assistance** - AI-powered message suggestions
+- **Persona System** - Different AI personalities for various contexts
+- **Smart Responses** - Context-aware reply recommendations
+- **Natural Language** - Human-like conversation flow
+
+## 📱 Responsive Design
+
+- **Mobile First** - Optimized for mobile devices
+- **Responsive Layout** - Adapts to all screen sizes
+- **Touch Friendly** - Gesture-based interactions
+- **PWA Ready** - Progressive Web App capabilities
+
+## 🔐 Security
+
+- **Row Level Security** - Database-level access control
+- **Authentication** - Secure user management with Supabase Auth
+- **Type Safety** - Prevents runtime errors with TypeScript
+- **Input Validation** - Client and server-side validation
+
+## 🚀 Deployment
+
+The app can be deployed to any static hosting service:
+
+- **Vercel** - Recommended for React apps
+- **Netlify** - Simple deployment with git integration
+- **GitHub Pages** - Free hosting for public repositories
+- **Supabase Hosting** - Integrated with the backend
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+## 🙏 Acknowledgments
+
+- **shadcn/ui** - Beautiful component library
+- **Supabase** - Backend infrastructure
+- **Radix UI** - Accessible component primitives
+- **Tailwind CSS** - Utility-first CSS framework
+- **Lucide** - Beautiful icon library
+
+---
+
+**Built with ❤️ by the Talk-Wiz team**
