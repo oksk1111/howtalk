@@ -1,0 +1,151 @@
+# Design Variations Generator - Cursor Rules
+
+## Primary Directive
+Generate 3 distinct visual variations of any provided design while maintaining identical functionality and component structure.
+
+## Core Rules
+
+### File Management Protocol
+```
+1. Always create/use `components/variations/` directory
+2. Save original as `source.tsx` with complete implementation
+3. Generate exactly 3 variations: `design1.tsx`, `design2.tsx`, `design3.tsx`
+4. Create corresponding CSS modules in `styles/variations/`
+5. Generate comparison page at `pages/variations/index.tsx`
+```
+
+### Component Structure Requirements
+- **Identical Props Interface**: All variations must accept same props
+- **Same Functionality**: Preserve all interactive behaviors and logic
+- **TypeScript First**: Use proper typing throughout
+- **CSS Modules**: Isolate styles per variation to prevent conflicts
+
+### Design Variation Strategy
+Generate these 3 distinct approaches:
+
+너가 추천하는대로 만들어봐. 제안해봐. 우리 서비스에 맞춰서 만들어봐.
+
+
+### Code Generation Template
+
+```typescript
+// Always start with this interface pattern
+interface ComponentProps {
+  // Extract props from original design
+}
+
+// Each variation follows this structure
+const DesignX: React.FC<ComponentProps> = (props) => {
+  // Identical logic to source
+  // Only styling changes
+  return (
+    <div className={styles.container}>
+      {/* Same JSX structure, different classes */}
+    </div>
+  );
+};
+```
+
+### CSS Module Patterns
+
+```css
+/* Each variation gets unique visual treatment */
+.container {
+  /* Base layout (same across all) */
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  
+  /* Variation-specific styling */
+  background: [variation-specific];
+  border-radius: [variation-specific];
+  box-shadow: [variation-specific];
+}
+
+/* Ensure responsive behavior */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+    margin: 0.5rem;
+  }
+}
+```
+
+### Comparison Page Template
+Always generate this structure:
+```typescript
+// pages/variations/index.tsx
+import Source from '../../components/variations/source';
+import Design1 from '../../components/variations/design1';
+import Design2 from '../../components/variations/design2';
+import Design3 from '../../components/variations/design3';
+
+const VariationsPage = () => (
+  <div className="variations-showcase">
+    <h1>Design Variations Comparison</h1>
+    
+    <section>
+      <h2>Original Design</h2>
+      <Source {...defaultProps} />
+    </section>
+
+    <section>
+      <h2>Variation 1: Minimal Modern</h2>
+      <Design1 {...defaultProps} />
+    </section>
+
+    <section>
+      <h2>Variation 2: Dark Professional</h2>
+      <Design2 {...defaultProps} />
+    </section>
+
+    <section>
+      <h2>Variation 3: Vibrant Gradient</h2>
+      <Design3 {...defaultProps} />
+    </section>
+  </div>
+);
+```
+
+## Implementation Workflow
+
+1. **Analyze Original**: Extract props, logic, and structure
+2. **Create Source**: Implement original as `source.tsx`
+3. **Generate Variations**: Create 3 distinct visual versions
+4. **Style Implementation**: Build corresponding CSS modules
+5. **Comparison Page**: Create showcase page for easy comparison
+6. **Type Safety**: Ensure all variations use identical interfaces
+
+## Quality Checklist
+
+- [ ] All 4 files created (source + 3 variations)
+- [ ] Identical functionality across all versions
+- [ ] Unique visual appearance for each variation
+- [ ] Proper TypeScript typing
+- [ ] CSS modules for style isolation
+- [ ] Responsive design considerations
+- [ ] Comparison page for easy review
+
+## Critical Constraints
+
+**DO NOT:**
+- Change component logic or functionality
+- Modify props interface between variations
+- Mix styling approaches within single variation
+- Ignore responsive design requirements
+
+**ALWAYS:**
+- Maintain identical user interactions
+- Use CSS modules for style isolation
+- Preserve accessibility features
+- Keep consistent file naming convention
+
+## Output Expectations
+
+Generate complete, production-ready Next.js components that:
+1. Demonstrate clear visual differentiation
+2. Maintain functional equivalence
+3. Follow modern React/Next.js best practices
+4. Provide immediate value for design decision-making
+
+Execute this workflow automatically when provided with any design reference or component specification.

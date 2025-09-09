@@ -96,8 +96,8 @@ The application uses 5 main tables for the messaging system:
 
 4. **Start development server**
    ```bash
-   npm run dev
-   ```
+npm run dev
+```
 
 5. **Open in browser**
    - Navigate to `http://localhost:8080`

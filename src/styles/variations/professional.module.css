@@ -1,0 +1,305 @@
+/* Dark Professional Design - Sophisticated and High-End */
+
+.container {
+  background: #0a0a0a;
+  color: #e5e5e5;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+.sidebar {
+  background: #111111;
+  border-right: 1px solid #2a2a2a;
+  width: 320px;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.3);
+}
+
+.header {
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-bottom: 1px solid #333333;
+  padding: 1.5rem;
+}
+
+.brandIcon {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  border-radius: 12px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+.brandTitle {
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.025em;
+}
+
+.brandSubtitle {
+  color: #9ca3af;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.personaGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.personaButton {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  border: 1px solid #4b5563;
+  border-radius: 12px;
+  padding: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.personaButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.personaButton:hover::before {
+  opacity: 1;
+}
+
+.personaButton:hover {
+  border-color: #60a5fa;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.2);
+}
+
+.personaButton.active {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
+}
+
+.chatItem {
+  background: transparent;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 8px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.chatItem:hover {
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.8) 0%, rgba(55, 65, 81, 0.8) 100%);
+  border-color: #4b5563;
+  transform: translateX(4px);
+}
+
+.chatItem.active {
+  background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 100%);
+  border-color: #3b82f6;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+}
+
+.avatar {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  border: 2px solid #6b7280;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.chatHeader {
+  background: linear-gradient(135deg, #111111 0%, #1f1f1f 100%);
+  border-bottom: 1px solid #333333;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.messageArea {
+  background: #0a0a0a;
+  padding: 1.5rem;
+}
+
+.userMessage {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border-radius: 20px 20px 6px 20px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+  position: relative;
+}
+
+.userMessage::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.aiMessage {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: #e5e7eb;
+  border-radius: 20px 20px 20px 6px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  border: 1px solid #4b5563;
+}
+
+.inputArea {
+  background: linear-gradient(135deg, #111111 0%, #1f1f1f 100%);
+  border-top: 1px solid #333333;
+  padding: 1.5rem;
+}
+
+.messageInput {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  border: 1px solid #4b5563;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  transition: all 0.3s ease;
+}
+
+.messageInput:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2), 0 4px 12px rgba(59, 130, 246, 0.1);
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+}
+
+.messageInput::placeholder {
+  color: #9ca3af;
+}
+
+.sendButton {
+  background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border-radius: 16px;
+  padding: 14px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+}
+
+.sendButton:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  transform: scale(1.05) translateY(-1px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.sendButton:disabled {
+  background: linear-gradient(135deg, #374151 0%, #4b5563 100%);
+  color: #9ca3af;
+  box-shadow: none;
+  transform: none;
+}
+
+.actionButton {
+  background: transparent;
+  color: #9ca3af;
+  border-radius: 12px;
+  padding: 10px;
+  transition: all 0.3s ease;
+  border: 1px solid transparent;
+}
+
+.actionButton:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(29, 78, 216, 0.1) 100%);
+  color: #60a5fa;
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: scale(1.05);
+}
+
+.badge {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #ffffff;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 600;
+  min-width: 22px;
+  height: 22px;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.timestamp {
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.dateHeader {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  color: #9ca3af;
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border: 1px solid #4b5563;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.typingIndicator {
+  background: linear-gradient(135deg, #1f2937 0%, #374151 100%);
+  border-radius: 20px 20px 20px 6px;
+  padding: 14px 18px;
+  border: 1px solid #4b5563;
+}
+
+.typingDot {
+  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+}
+
+.sectionTitle {
+  color: #d1d5db;
+  font-weight: 600;
+  letter-spacing: 0.025em;
+}
+
+.welcomeText {
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    position: fixed;
+    left: -100%;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 20;
+  }
+  
+  .sidebar.open {
+    left: 0;
+  }
+  
+  .container {
+    flex-direction: column;
+  }
+  
+  .header {
+    padding: 1rem;
+  }
+  
+  .inputArea {
+    padding: 1rem;
+  }
+  
+  .messageArea {
+    padding: 1rem;
+  }
+}

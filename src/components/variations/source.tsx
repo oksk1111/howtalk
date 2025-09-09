@@ -1,10 +1,8 @@
 import { useRef, useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { useNavigate } from 'react-router-dom';
 import { useAIChat, AI_PERSONAS } from '@/hooks/useAIChat';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { 
@@ -19,10 +17,8 @@ import {
   MoreVertical,
   Sparkles,
   Trash2,
-  Edit3,
   Copy,
-  RefreshCw,
-  Palette
+  RefreshCw
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -33,10 +29,14 @@ import {
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
 
-const EnhancedAIMessenger = () => {
+interface AIMessengerProps {
+  className?: string;
+  variant?: 'source' | 'minimal' | 'professional' | 'vibrant';
+}
+
+const AIMessengerSource: React.FC<AIMessengerProps> = ({ className, variant = 'source' }) => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
   const { 
     currentRoom, 
     rooms, 
@@ -136,7 +136,7 @@ const EnhancedAIMessenger = () => {
   };
 
   return (
-    <div className="h-screen flex" style={{ background: 'hsl(var(--background))' }}>
+    <div className={`h-screen flex ${className}`} style={{ background: 'hsl(var(--background))' }}>
       {/* 사이드바 */}
       <div 
         className="w-80 flex flex-col border-r"
@@ -168,15 +168,6 @@ const EnhancedAIMessenger = () => {
               </div>
             </div>
             <div className="flex gap-1">
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8"
-                onClick={() => navigate('/variations')}
-                title="디자인 변형 보기"
-              >
-                <Palette className="h-4 w-4" style={{ color: 'hsl(var(--primary))' }} />
-              </Button>
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <Settings className="h-4 w-4" style={{ color: 'hsl(var(--primary))' }} />
               </Button>
@@ -208,57 +199,28 @@ const EnhancedAIMessenger = () => {
             </Button>
           </div>
           
-          {showPersonaSelector ? (
-            <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-              {AI_PERSONAS.map((persona) => (
-                <Button
-                  key={persona.id}
-                  variant="ghost"
-                  className="h-auto p-3 flex items-center gap-3 justify-start"
-                  onClick={() => handleCreateRoom(persona)}
-                  style={{
-                    background: selectedPersona.id === persona.id 
-                      ? 'hsl(var(--card))' 
-                      : 'transparent'
-                  }}
-                >
-                  <span className="text-lg">{persona.icon}</span>
-                  <div className="text-left flex-1">
-                    <div className="font-medium text-sm" style={{ color: 'hsl(var(--text-body))' }}>
-                      {persona.name}
-                    </div>
-                    <div className="text-xs" style={{ color: 'hsl(var(--text-meta))' }}>
-                      {persona.description}
-                    </div>
-                  </div>
-                  <Plus className="h-4 w-4" style={{ color: 'hsl(var(--primary))' }} />
-                </Button>
-              ))}
-            </div>
-          ) : (
-            <div className="grid grid-cols-2 gap-2">
-              {AI_PERSONAS.slice(0, 4).map((persona) => (
-                <Button
-                  key={persona.id}
-                  variant={selectedPersona.id === persona.id ? "default" : "outline"}
-                  className="h-auto p-3 flex flex-col items-center gap-1"
-                  onClick={() => setSelectedPersona(persona)}
-                  style={{
-                    background: selectedPersona.id === persona.id 
-                      ? 'hsl(var(--primary))' 
-                      : 'hsl(var(--card))',
-                    color: selectedPersona.id === persona.id 
-                      ? 'hsl(var(--primary-foreground))' 
-                      : 'hsl(var(--text-body))',
-                    borderColor: 'hsl(var(--border))'
-                  }}
-                >
-                  <span className="text-lg">{persona.icon}</span>
-                  <span className="text-xs font-medium">{persona.name}</span>
-                </Button>
-              ))}
-            </div>
-          )}
+          <div className="grid grid-cols-2 gap-2">
+            {AI_PERSONAS.slice(0, 4).map((persona) => (
+              <Button
+                key={persona.id}
+                variant={selectedPersona.id === persona.id ? "default" : "outline"}
+                className="h-auto p-3 flex flex-col items-center gap-1"
+                onClick={() => setSelectedPersona(persona)}
+                style={{
+                  background: selectedPersona.id === persona.id 
+                    ? 'hsl(var(--primary))' 
+                    : 'hsl(var(--card))',
+                  color: selectedPersona.id === persona.id 
+                    ? 'hsl(var(--primary-foreground))' 
+                    : 'hsl(var(--text-body))',
+                  borderColor: 'hsl(var(--border))'
+                }}
+              >
+                <span className="text-lg">{persona.icon}</span>
+                <span className="text-xs font-medium">{persona.name}</span>
+              </Button>
+            ))}
+          </div>
         </div>
 
         {/* 채팅 목록 */}
@@ -436,7 +398,6 @@ const EnhancedAIMessenger = () => {
                       >
                         <p className="text-sm leading-relaxed">{message.content}</p>
                         
-                        {/* 메시지 액션 버튼 */}
                         <div className="absolute -top-8 right-0 opacity-0 group-hover:opacity-100 transition-opacity">
                           <div 
                             className="flex gap-1 p-1 rounded-lg"
@@ -593,4 +554,4 @@ const EnhancedAIMessenger = () => {
   );
 };
 
-export default EnhancedAIMessenger;
+export default AIMessengerSource;
