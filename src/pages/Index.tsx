@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { TalkWizMessenger } from '@/components/TalkWizMessenger';
 import EnhancedAIMessenger from '@/components/EnhancedAIMessenger';
 import { Button } from '@/components/ui/button';
-import { MessageSquare } from 'lucide-react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MessageSquare, Sparkles } from 'lucide-react';
 
 const Index = () => {
   const { user, loading } = useAuth();
@@ -41,7 +43,30 @@ const Index = () => {
     );
   }
 
-  return <EnhancedAIMessenger />;
+  return (
+    <div className="min-h-screen bg-background">
+      <Tabs defaultValue="talkwiz" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="talkwiz" className="flex items-center gap-2">
+            <Sparkles className="h-4 w-4" />
+            TalkWiz
+          </TabsTrigger>
+          <TabsTrigger value="enhanced" className="flex items-center gap-2">
+            <MessageSquare className="h-4 w-4" />
+            Enhanced AI
+          </TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="talkwiz" className="mt-0">
+          <TalkWizMessenger />
+        </TabsContent>
+        
+        <TabsContent value="enhanced" className="mt-0">
+          <EnhancedAIMessenger />
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
 };
 
 export default Index;
