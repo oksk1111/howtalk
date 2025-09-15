@@ -1,5 +1,7 @@
 # HowTalk AI Messenger
 
+**🌍 Language / 언어**: [English](README.md) | [한국어](README-ko.md)
+
 AI-powered real-time messenger application with intelligent conversation assistance, persona-based chat features, and integrated payment system.
 
 ## 🚀 Features
