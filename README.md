@@ -1,15 +1,33 @@
-# Talk-Wiz AI Messenger
+# HowTalk AI Messenger
 
-AI-powered real-time messenger application with intelligent conversation assistance and persona-based chat features.
+AI-powered real-time messenger application with intelligent conversation assistance, persona-based chat features, and integrated payment system.
 
 ## 🚀 Features
 
+### 💬 Messaging System
 - **Real-time Messaging**: Instant chat with WebSocket integration
 - **AI Persona System**: Context-aware AI assistance with different personalities
 - **Friend Management**: Add and manage friends with real-time status
 - **Group Chats**: Create and manage group conversations
-- **Modern UI**: Beautiful, responsive design with dark/light mode support
-- **Type-safe**: Full TypeScript implementation with strict type checking
+
+### 💳 Payment Integration
+- **토스페이먼츠 연동**: Secure payment processing with TossPayments
+- **단건결제**: One-time payment for credits and services
+- **정기결제/구독**: Subscription-based billing with automatic renewal
+- **결제 내역 관리**: Complete payment history and transaction tracking
+- **환불 시스템**: Automated refund processing
+
+### 🔐 Authentication & Security
+- **Supabase Auth**: Email/password and OAuth (Google) authentication
+- **프로필 관리**: User profile with payment information
+- **Row Level Security**: Database-level access control
+- **Type Safety**: Full TypeScript implementation with strict type checking
+
+### 🎨 Modern UI/UX
+- **Responsive Design**: Mobile-first approach with adaptive layouts
+- **Dark/Light Mode**: Automatic theme switching support
+- **shadcn/ui Components**: Modern component library built on Radix UI
+- **Accessibility**: WCAG compliant interface components
 
 ## 🛠️ Tech Stack
 
@@ -27,6 +45,12 @@ AI-powered real-time messenger application with intelligent conversation assista
 - **Row Level Security** - Secure data access policies
 - **Authentication** - Email/password and OAuth providers
 
+### Payment System
+- **토스페이먼츠** - Korean payment gateway integration
+- **TossPayments SDK v2** - Latest payment widget and API
+- **Payment MCP** - Model Context Protocol for payment operations
+- **Billing System** - Subscription and one-time payment support
+
 ### Development Tools
 - **ESLint** - Code linting and quality checks
 - **React Query** - Server state management
@@ -36,25 +60,29 @@ AI-powered real-time messenger application with intelligent conversation assista
 ## 📁 Project Structure
 
 ```
-talk-wiz/
-├── .cursor/rules/              # Cursor AI development rules
-│   ├── project-structure.mdc   # Project architecture guide
-│   ├── typescript-conventions.mdc # TypeScript coding standards
-│   ├── react-components.mdc    # React component guidelines
-│   ├── supabase-integration.mdc # Backend integration patterns
-│   └── ui-styling.mdc          # UI/UX design system
+howtalk/
 ├── src/
 │   ├── components/             # React components
 │   │   ├── ui/                # shadcn/ui components (47 components)
-│   │   └── MessengerApp.tsx   # Main messenger interface
+│   │   ├── auth/              # Authentication components
+│   │   │   └── AuthPage.tsx   # Login/signup interface
+│   │   ├── payment/           # Payment system components
+│   │   │   ├── ProductCard.tsx    # Product display and purchase
+│   │   │   ├── PaymentHistory.tsx # Payment transaction history
+│   │   │   └── PaymentSection.tsx # Main payment management
+│   │   └── HowTalkMessenger.tsx   # Main messenger interface
 │   ├── hooks/                 # Custom React hooks
-│   │   ├── useAuth.tsx        # Authentication management
+│   │   ├── useAuth.tsx        # Authentication with payment info
+│   │   ├── usePayments.tsx    # Payment operations
+│   │   ├── useTossPayments.tsx # TossPayments integration
 │   │   ├── use-mobile.tsx     # Mobile device detection
 │   │   └── use-toast.ts       # Toast notifications
 │   ├── integrations/          # External service integrations
 │   │   └── supabase/          # Supabase client and types
 │   ├── lib/                   # Utility libraries
 │   ├── pages/                 # Page components
+│   │   ├── PaymentSuccess.tsx # Payment success handling
+│   │   └── PaymentFail.tsx    # Payment failure handling
 │   └── main.tsx              # Application entry point
 ├── supabase/                  # Database schema and migrations
 └── public/                    # Static assets
@@ -62,13 +90,22 @@ talk-wiz/
 
 ## 🗄️ Database Schema
 
-The application uses 5 main tables for the messaging system:
+The application uses 11 main tables for the messaging and payment system:
 
-1. **profiles** - User profile information
+### Messaging System
+1. **profiles** - User profile information with payment data
 2. **chat_rooms** - Chat rooms (individual/group)
 3. **chat_participants** - Chat room membership
 4. **messages** - Messages with AI persona support
 5. **friendships** - Friend relationship management
+
+### Payment System
+6. **products** - Available products and services
+7. **subscription_plans** - Subscription billing plans
+8. **payments** - Payment transactions (one-time/subscription)
+9. **subscriptions** - Active subscription management
+10. **customer_payment_info** - Customer billing information
+11. **refunds** - Refund transaction records
 
 ## 🚀 Getting Started
 
@@ -81,8 +118,8 @@ The application uses 5 main tables for the messaging system:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/oksk1111/talk-wiz.git
-   cd talk-wiz
+   git clone https://github.com/yourusername/howtalk.git
+   cd howtalk
    ```
 
 2. **Install dependencies**
@@ -92,12 +129,17 @@ The application uses 5 main tables for the messaging system:
 
 3. **Environment Setup**
    - Supabase configuration is pre-configured in the client
-   - No additional environment variables required for development
+   - TossPayments test keys are included for development
+   - Create `.env` file for production deployment:
+   ```bash
+   VITE_TOSS_CLIENT_KEY=your_toss_client_key
+   TOSS_SECRET_KEY=your_toss_secret_key
+   ```
 
 4. **Start development server**
    ```bash
-npm run dev
-```
+   npm run dev
+   ```
 
 5. **Open in browser**
    - Navigate to `http://localhost:8080`
@@ -119,15 +161,6 @@ This project uses shadcn/ui components for a consistent, accessible design syste
 - **Accessibility First** - Built on Radix UI primitives
 - **Customizable** - Full control over styling with Tailwind CSS
 - **Dark Mode** - Automatic theme switching support
-
-## 🔧 Development Guidelines
-
-This project includes comprehensive Cursor Rules for consistent development:
-
-- **TypeScript Conventions** - Naming, imports, type safety
-- **React Component Patterns** - Structure, hooks, state management
-- **Supabase Integration** - Database operations, authentication
-- **UI Styling** - Design system, responsive design, accessibility
 
 ## 🤖 AI Features
 
@@ -181,4 +214,4 @@ This project is open source and available under the [MIT License](LICENSE).
 
 ---
 
-**Built with ❤️ by the Talk-Wiz team**
+**Built with ❤️ by the HowTalk team**

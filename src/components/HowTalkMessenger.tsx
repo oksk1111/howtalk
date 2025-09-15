@@ -29,7 +29,7 @@ const aiSuggestions = [
   '취미가 무엇인지 궁금해요',
 ];
 
-export const TalkWizMessenger = () => {
+export const HowTalkMessenger = () => {
   const { user, signOut } = useAuth();
   const { toast } = useToast();
   const [activeTab, setActiveTab] = useState<'friends' | 'chats'>('friends');
@@ -78,7 +78,7 @@ export const TalkWizMessenger = () => {
       <div className="w-80 bg-gray-100 flex flex-col">
         {/* 사이드바 헤더 */}
         <div className="bg-white p-4 flex items-center justify-between shadow-sm">
-          <h1 className="text-xl font-bold text-gray-800">TalkWiz</h1>
+          <h1 className="text-xl font-bold text-gray-800">HowTalk</h1>
           <Button
             variant="ghost"
             size="icon"

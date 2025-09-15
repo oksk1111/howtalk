@@ -1,7 +1,7 @@
-import { TalkWizAuth } from '@/components/TalkWizAuth';
+import AuthPage from '@/components/auth/AuthPage';
 
 const Auth = () => {
-  return <TalkWizAuth />;
+  return <AuthPage />;
 };
 
 export default Auth;

@@ -1,29 +1,11 @@
-# Logs
-logs
-*.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
-lerna-debug.log*
-
-# Node modules
+# Dependencies
 node_modules
-dist
-dist-ssr
-*.local
+/.pnp
+.pnp.js
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
-!.vscode/settings.json
-.idea
-.DS_Store
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
+# Production
+/dist
+/build
 
 # Environment variables
 .env
@@ -32,20 +14,27 @@ dist-ssr
 .env.test.local
 .env.production.local
 
-# Build outputs
-build/
-out/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
 
-# TypeScript
-*.tsbuildinfo
-
-# OS generated files
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
-# Lock files (keeping package-lock.json)
-yarn.lock
-pnpm-lock.yaml
-bun.lockb
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
 # Runtime data
 pids
@@ -60,8 +49,8 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Dependency directories
-jspm_packages/
+# ESLint cache
+.eslintcache
 
 # Optional npm cache directory
 .npm
@@ -93,10 +82,7 @@ jspm_packages/
 
 # Nuxt.js build / generate output
 .nuxt
-
-# Gatsby files
-.cache/
-public
+dist
 
 # Storybook build outputs
 .out
@@ -106,5 +92,12 @@ public
 tmp/
 temp/
 
-# Supabase
-.supabase
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
