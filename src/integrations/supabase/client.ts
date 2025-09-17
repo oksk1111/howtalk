@@ -2,8 +2,27 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://jdkornpmgusbxsnxcmub.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Impka29ybnBtZ3VzYnhzbnhjbXViIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTczMTM1NDMsImV4cCI6MjA3Mjg4OTU0M30.r1gQyW-5PAc2RN617oiKhzMTdDCx1LztP-9mh3Xbqvw";
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// 디버깅용 환경변수 출력
+console.log('🔧 Supabase Client 환경변수 체크:', {
+  SUPABASE_URL,
+  SUPABASE_PROJECT_ID: import.meta.env.VITE_SUPABASE_PROJECT_ID,
+  SUPABASE_PUBLISHABLE_KEY_LENGTH: SUPABASE_PUBLISHABLE_KEY?.length,
+  SUPABASE_PUBLISHABLE_KEY_PREFIX: SUPABASE_PUBLISHABLE_KEY?.substring(0, 20),
+  ALL_ENV_VARS: Object.keys(import.meta.env).filter(key => key.includes('SUPABASE'))
+});
+
+if (!SUPABASE_URL) {
+  console.error('❌ Missing VITE_SUPABASE_URL environment variable');
+  throw new Error('Missing VITE_SUPABASE_URL environment variable');
+}
+
+if (!SUPABASE_PUBLISHABLE_KEY) {
+  console.error('❌ Missing VITE_SUPABASE_ANON_KEY environment variable');
+  throw new Error('Missing VITE_SUPABASE_ANON_KEY environment variable');
+}
 
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
@@ -13,5 +32,133 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
     storage: localStorage,
     persistSession: true,
     autoRefreshToken: true,
+    detectSessionInUrl: true, // URL에서 세션 감지 활성화
+  },
+  db: {
+    schema: 'public'
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'supabase-js-web'
+    },
+    fetch: (url, options = {}) => {
+      // 30초 타임아웃으로 증가
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      
+      return fetch(url, {
+        ...options,
+        signal: controller.signal,
+      }).finally(() => {
+        clearTimeout(timeoutId);
+      });
+    }
   }
 });
+
+// 연결 테스트 함수
+export const testSupabaseConnection = async () => {
+  try {
+    console.log('🔍 Supabase 연결 테스트 시작...');
+    
+    // 1. 기본 연결 테스트 (간단한 profiles 테이블 조회)
+    console.log('⏳ DB 쿼리 실행 중...');
+    
+    const dbResult = await Promise.race([
+      supabase.from('profiles').select('user_id').limit(1),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('DB 연결 시간 초과 (5초)')), 5000)
+      )
+    ]);
+    
+    const { data, error } = dbResult as any;
+    
+    if (error) {
+      console.error('❌ Supabase DB 연결 실패:', error);
+      return { success: false, error };
+    }
+    
+    console.log('✅ Supabase DB 연결 성공:', data);
+    
+    // 2. 인증 상태 확인
+    console.log('🔐 인증 상태 확인 중...');
+    
+    const authResult = await Promise.race([
+      supabase.auth.getSession(),
+      new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('인증 확인 시간 초과 (5초)')), 5000)
+      )
+    ]);
+    
+    const { data: authData, error: authError } = authResult as any;
+    
+    console.log('🔐 현재 인증 상태:', { 
+      hasSession: !!authData.session,
+      userId: authData.session?.user?.id,
+      authError 
+    });
+    
+    return { success: true, data, authData };
+  } catch (error) {
+    console.error('💥 Supabase 연결 테스트 예외:', error);
+    return { success: false, error };
+  }
+};
+
+// 페이지 로드 시 자동으로 연결 테스트 실행
+setTimeout(() => {
+  testSupabaseConnection();
+}, 1000);
+
+// 디버깅을 위해 window 객체에 함수들 추가
+if (typeof window !== 'undefined') {
+  (window as any).supabase = supabase;
+  (window as any).testSupabaseConnection = testSupabaseConnection;
+  (window as any).debugSupabase = {
+    testConnection: testSupabaseConnection,
+    getEnvVars: () => ({
+      SUPABASE_URL,
+      SUPABASE_PROJECT_ID: import.meta.env.VITE_SUPABASE_PROJECT_ID,
+      SUPABASE_PUBLISHABLE_KEY: SUPABASE_PUBLISHABLE_KEY?.substring(0, 20) + '...',
+      ALL_ENV: import.meta.env
+    }),
+    getSession: () => supabase.auth.getSession(),
+    getUser: () => supabase.auth.getUser(),
+    signOut: () => supabase.auth.signOut(),
+    testDB: () => supabase.from('profiles').select('user_id').limit(1),
+    testRealtime: () => {
+      console.log('🔔 실시간 테스트 시작...');
+      const channel = supabase
+        .channel('test_channel')
+        .on('postgres_changes', {
+          event: '*',
+          schema: 'public',
+          table: 'messages'
+        }, (payload) => {
+          console.log('📨 실시간 이벤트 수신:', payload);
+        })
+        .subscribe((status) => {
+          console.log('📡 실시간 구독 상태:', status);
+        });
+      
+      // 10초 후 자동 해제
+      setTimeout(() => {
+        supabase.removeChannel(channel);
+        console.log('🔕 실시간 테스트 완료');
+      }, 10000);
+      
+      return channel;
+    }
+  };
+  
+  console.log('🎮 디버깅 도구가 window 객체에 추가되었습니다:');
+  console.log('- window.supabase: Supabase 클라이언트');
+  console.log('- window.testSupabaseConnection(): 연결 테스트');
+  console.log('- window.debugSupabase: 디버깅 유틸리티');
+  console.log('- window.debugSupabase.testRealtime(): 실시간 테스트');
+}

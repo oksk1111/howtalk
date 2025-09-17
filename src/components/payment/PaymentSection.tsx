@@ -1,24 +1,22 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { usePayments } from '@/hooks/usePayments';
+import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import ProductCard from './ProductCard';
 import PaymentHistory from './PaymentHistory';
-import { CreditCard, Package, Receipt, User, LogOut } from 'lucide-react';
+import { CreditCard, Package, Receipt, User } from 'lucide-react';
 
 const PaymentSection = () => {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile } = useAuth();
   const { products, fetchProducts, loading } = usePayments();
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -46,14 +44,6 @@ const PaymentSection = () => {
                   {user?.email}
                 </p>
               </div>
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                onClick={handleSignOut}
-                className="text-muted-foreground hover:text-destructive"
-              >
-                <LogOut className="h-4 w-4" />
-              </Button>
             </div>
           </CardContent>
         </Card>

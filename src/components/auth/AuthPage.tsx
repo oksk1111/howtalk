@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -10,12 +10,60 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Separator } from '@/components/ui/separator';
 import { Mail, Lock, User, Chrome, TestTube } from 'lucide-react';
-import { createTestUser, isDevelopment } from '@/utils/testAuth';
+
+// 개발 환경 체크 함수
+const isDevelopment = () => {
+  return import.meta.env.DEV || import.meta.env.MODE === 'development';
+};
+
+// 테스트 사용자 생성/로그인 함수
+const createTestUser = async (authContext: any) => {
+  const testEmail = 'test@example.com';
+  const testPassword = 'test123456';
+  const testDisplayName = 'Test User';
+  
+  try {
+    // 먼저 로그인 시도
+    const signInResult = await authContext.signIn(testEmail, testPassword);
+    
+    if (!signInResult.error) {
+      return { success: true, wasExisting: true };
+    }
+    
+    // 로그인 실패시 회원가입 시도
+    const signUpResult = await authContext.signUp(testEmail, testPassword, testDisplayName);
+    
+    if (!signUpResult.error) {
+      // 회원가입 후 바로 로그인 시도
+      await new Promise(resolve => setTimeout(resolve, 1000)); // 1초 대기
+      const postSignUpSignIn = await authContext.signIn(testEmail, testPassword);
+      
+      if (!postSignUpSignIn.error) {
+        return { success: true, wasExisting: false };
+      }
+    }
+    
+    return { 
+      success: false, 
+      error: signUpResult.error?.message || '테스트 계정 생성에 실패했습니다.' 
+    };
+  } catch (error: any) {
+    return { success: false, error: error.message };
+  }
+};
 
 const AuthPage = () => {
   const navigate = useNavigate();
-  const { signIn, signUp, signInWithGoogle, loading } = useAuth();
+  const { signIn, signUp, signInWithGoogle, loading, session } = useAuth();
   const { toast } = useToast();
+
+  // 세션이 있으면 메인 페이지로 리다이렉트
+  React.useEffect(() => {
+    if (session) {
+      console.log('🔄 AuthPage: 세션 감지됨, 메인 페이지로 이동');
+      navigate('/', { replace: true });
+    }
+  }, [session, navigate]);
 
   // 폼 상태 관리
   const [signInForm, setSignInForm] = useState({
@@ -61,7 +109,7 @@ const AuthPage = () => {
         title: "로그인 성공",
         description: "환영합니다!"
       });
-      navigate('/');
+      // useEffect에서 세션 감지로 자동 리다이렉트됨
     }
   };
 
@@ -132,12 +180,27 @@ const AuthPage = () => {
 
   // 구글 로그인 처리
   const handleGoogleSignIn = async () => {
-    const { error } = await signInWithGoogle();
+    console.log('🎯 AuthPage: 구글 로그인 버튼 클릭');
     
-    if (error) {
+    try {
+      const { error } = await signInWithGoogle();
+      
+      if (error) {
+        console.error('❌ AuthPage: 구글 로그인 에러:', error);
+        toast({
+          title: "구글 로그인 실패",
+          description: error.message || "구글 로그인 중 오류가 발생했습니다.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('✅ AuthPage: 구글 로그인 리다이렉트 시작');
+        // OAuth 리다이렉트가 시작되므로 추가 처리는 필요없음
+      }
+    } catch (exception: any) {
+      console.error('💥 AuthPage: 구글 로그인 예외:', exception);
       toast({
-        title: "구글 로그인 실패",
-        description: error.message,
+        title: "구글 로그인 오류",
+        description: "예상치 못한 오류가 발생했습니다.",
         variant: "destructive"
       });
     }
@@ -146,7 +209,7 @@ const AuthPage = () => {
   // 테스트 계정 로그인 (개발 환경에서만)
   const handleTestUserLogin = async () => {
     try {
-      const result = await createTestUser();
+      const result = await createTestUser({ signIn, signUp });
       
       if (result.success) {
         toast({
@@ -155,7 +218,7 @@ const AuthPage = () => {
             ? "기존 테스트 계정으로 로그인했습니다."
             : "새 테스트 계정을 생성하여 로그인했습니다."
         });
-        navigate('/');
+        // useEffect에서 세션 감지로 자동 리다이렉트됨
       } else {
         toast({
           title: "테스트 계정 로그인 실패",

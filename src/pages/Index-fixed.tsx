@@ -4,11 +4,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 import MessengerApp from '@/components/MessengerApp';
 import PaymentSection from '@/components/payment/PaymentSection';
+import ConnectionTest from '@/components/ConnectionTest';
 import { SimpleFriendAdd } from '@/components/SimpleFriendAdd';
+import { SimpleFriendAddTest } from '@/components/SimpleFriendAddTest';
+import { DebugSupabase } from '@/components/DebugSupabase';
 import { DatabaseSchemaChecker } from '@/components/DatabaseSchemaChecker';
 import { DatabaseManager } from '@/components/DatabaseManager';
 import { SupabaseQuickAccess } from '@/components/SupabaseQuickAccess';
-import DatabaseDebugger from '@/components/DatabaseDebugger';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, CreditCard, UserPlus, Bug, LogOut, User } from 'lucide-react';
@@ -164,13 +166,24 @@ const Index = () => {
                 <h2 className="text-xl font-semibold mb-4">친구 추가</h2>
                 <SimpleFriendAdd />
               </div>
+              
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">친구 추가 테스트</h2>
+                <SimpleFriendAddTest />
+              </div>
             </div>
           </TabsContent>
 
           <TabsContent value="debug" className="mt-6">
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm">
-                <DatabaseDebugger />
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">연결 테스트</h2>
+                <ConnectionTest />
+              </div>
+
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">Supabase 디버그</h2>
+                <DebugSupabase />
               </div>
 
               <div className="bg-white rounded-lg shadow-sm p-6">

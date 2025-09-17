@@ -60,7 +60,7 @@ export const MCPConfigStatus: React.FC = () => {
         servers: {
           supabase: {
             serverName: 'supabase',
-            url: 'https://jdkornpmgusbxsnxcmub.supabase.co',
+            url: import.meta.env.VITE_SUPABASE_URL,
             hasToken: true
           },
           github: {
@@ -90,7 +90,7 @@ export const MCPConfigStatus: React.FC = () => {
           "args": [
             "-y",
             "@supabase/mcp-server-supabase@latest",
-            "--project-ref=jdkornpmgusbxsnxcmub"
+            `--project-ref=${import.meta.env.VITE_SUPABASE_PROJECT_ID || "ufmymlvaqzfgasblvnaa"}`
           ],
           "env": {
             "SUPABASE_ACCESS_TOKEN": "YOUR_SUPABASE_ACCESS_TOKEN"
@@ -271,8 +271,8 @@ export const MCPConfigStatus: React.FC = () => {
                     <div className="p-3 bg-muted rounded-lg text-sm space-y-1">
                       <div className="font-medium text-blue-600 dark:text-blue-400 mb-2">🗄️ Supabase MCP 서버</div>
                       <div><strong>서버명:</strong> {globalConfig.servers.supabase.serverName}</div>
-                      <div><strong>프로젝트:</strong> jdkornpmgusbxsnxcmub</div>
-                      <div><strong>명령어:</strong> npx -y @supabase/mcp-server-supabase@latest --project-ref=jdkornpmgusbxsnxcmub</div>
+                      <div><strong>프로젝트:</strong> {import.meta.env.VITE_SUPABASE_PROJECT_ID || "ufmymlvaqzfgasblvnaa"}</div>
+                      <div><strong>명령어:</strong> npx -y @supabase/mcp-server-supabase@latest --project-ref={import.meta.env.VITE_SUPABASE_PROJECT_ID || "ufmymlvaqzfgasblvnaa"}</div>
                     </div>
                   )}
                   

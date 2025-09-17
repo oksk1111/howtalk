@@ -1,69 +1,46 @@
 import { useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
 import MessengerApp from '@/components/MessengerApp';
 import PaymentSection from '@/components/payment/PaymentSection';
+import ConnectionTest from '@/components/ConnectionTest';
 import { SimpleFriendAdd } from '@/components/SimpleFriendAdd';
+import { SimpleFriendAddTest } from '@/components/SimpleFriendAddTest';
+import { DebugSupabase } from '@/components/DebugSupabase';
 import { DatabaseSchemaChecker } from '@/components/DatabaseSchemaChecker';
 import { DatabaseManager } from '@/components/DatabaseManager';
 import { SupabaseQuickAccess } from '@/components/SupabaseQuickAccess';
-import DatabaseDebugger from '@/components/DatabaseDebugger';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { MessageSquare, CreditCard, UserPlus, Bug, LogOut, User } from 'lucide-react';
 
 const Index = () => {
-  const { user, profile, loading, signOut } = useAuth();
+  const { user, profile, loading } = useAuth();
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     console.log('🔒 Index: 로그아웃 버튼 클릭됨');
     try {
-      console.log('🔄 Index: useAuth.signOut() 호출...');
-      
-      // 타임아웃 설정 (15초)
-      const timeoutPromise = new Promise<never>((_, reject) => 
-        setTimeout(() => reject(new Error('로그아웃 처리 시간 초과')), 15000)
-      );
-      
-      const signOutPromise = signOut();
-      const { error } = await Promise.race([signOutPromise, timeoutPromise]);
-      
-      console.log('📝 Index: signOut 결과:', { error });
+      console.log('🔄 Index: 직접 Supabase 로그아웃 호출...');
+      const { error } = await supabase.auth.signOut();
       
       if (error) {
-        console.warn('⚠️ Index: 로그아웃 경고:', error);
+        console.error('❌ Index: 직접 로그아웃 실패:', error);
         toast({
-          title: "로그아웃 경고",
-          description: "일부 과정에서 문제가 있었지만 로그아웃을 진행합니다.",
-          variant: "default"
+          title: "로그아웃 실패",
+          description: error.message || "로그아웃 중 오류가 발생했습니다.",
+          variant: "destructive"
         });
       } else {
-        console.log('✅ Index: 로그아웃 성공 - 페이지 이동');
-        toast({
-          title: "로그아웃 완료",
-          description: "안전하게 로그아웃되었습니다."
-        });
+        console.log('✅ Index: 직접 로그아웃 성공 - 리다이렉트 처리');
+        // 성공 시 바로 인증 페이지로 이동
+        window.location.href = '/auth';
       }
-      
-      // 성공이든 실패든 인증 페이지로 이동
-      console.log('🚀 Index: 인증 페이지로 이동');
-      navigate('/auth');
-      
     } catch (error: any) {
       console.error('❌ Index: 로그아웃 예외:', error);
-      
-      toast({
-        title: "로그아웃",
-        description: "로그아웃을 진행합니다.",
-        variant: "default"
-      });
-      
-      // 예외 발생 시에도 강제 이동
-      console.log('🚨 Index: 예외 발생으로 강제 페이지 이동');
-      navigate('/auth');
+      // 예외 발생 시에도 강제 리다이렉트
+      window.location.href = '/auth';
     }
   };
 
@@ -127,64 +104,74 @@ const Index = () => {
 
         {/* 메인 탭 네비게이션 */}
         <Tabs defaultValue="messenger" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="messenger" className="flex items-center">
-              <MessageSquare className="h-4 w-4 mr-2" />
+          <TabsList className="grid w-full grid-cols-4 mb-6">
+            <TabsTrigger value="messenger" className="flex items-center gap-2">
+              <MessageSquare className="h-4 w-4" />
               메신저
             </TabsTrigger>
-            <TabsTrigger value="payment" className="flex items-center">
-              <CreditCard className="h-4 w-4 mr-2" />
+            <TabsTrigger value="payment" className="flex items-center gap-2">
+              <CreditCard className="h-4 w-4" />
               결제
             </TabsTrigger>
-            <TabsTrigger value="friend" className="flex items-center">
-              <UserPlus className="h-4 w-4 mr-2" />
-              친구 추가
+            <TabsTrigger value="friends" className="flex items-center gap-2">
+              <UserPlus className="h-4 w-4" />
+              친구 관리
             </TabsTrigger>
-            <TabsTrigger value="debug" className="flex items-center">
-              <Bug className="h-4 w-4 mr-2" />
+            <TabsTrigger value="debug" className="flex items-center gap-2">
+              <Bug className="h-4 w-4" />
               디버그
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="messenger" className="mt-6">
+          <TabsContent value="messenger" className="mt-0">
             <div className="bg-white rounded-lg shadow-sm">
               <MessengerApp />
             </div>
           </TabsContent>
 
-          <TabsContent value="payment" className="mt-6">
-            <div className="bg-white rounded-lg shadow-sm p-6">
+          <TabsContent value="payment" className="mt-0">
+            <div className="bg-white rounded-lg shadow-sm">
               <PaymentSection />
             </div>
           </TabsContent>
 
-          <TabsContent value="friend" className="mt-6">
+          <TabsContent value="friends" className="mt-0">
             <div className="space-y-6">
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">친구 추가</h2>
                 <SimpleFriendAdd />
               </div>
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">친구 추가 테스트</h2>
+                <SimpleFriendAddTest />
+              </div>
             </div>
           </TabsContent>
 
-          <TabsContent value="debug" className="mt-6">
+          <TabsContent value="debug" className="mt-0">
             <div className="space-y-6">
-              <div className="bg-white rounded-lg shadow-sm">
-                <DatabaseDebugger />
-              </div>
-
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">데이터베이스 스키마 체크</h2>
+                <h2 className="text-xl font-semibold mb-4">연결 테스트</h2>
+                <ConnectionTest />
+              </div>
+              
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">Supabase 디버그</h2>
+                <DebugSupabase />
+              </div>
+              
+              <div className="bg-white rounded-lg shadow-sm p-6">
+                <h2 className="text-xl font-semibold mb-4">데이터베이스 스키마</h2>
                 <DatabaseSchemaChecker />
               </div>
-
+              
               <div className="bg-white rounded-lg shadow-sm p-6">
                 <h2 className="text-xl font-semibold mb-4">데이터베이스 관리</h2>
                 <DatabaseManager />
               </div>
-
+              
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h2 className="text-xl font-semibold mb-4">Supabase 빠른 접근</h2>
+                <h2 className="text-xl font-semibold mb-4">Supabase 빠른 액세스</h2>
                 <SupabaseQuickAccess />
               </div>
             </div>

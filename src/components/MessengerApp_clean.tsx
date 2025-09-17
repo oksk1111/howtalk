@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from '@/components/ui/dialog';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { MessageSquare, Users, Send, Clock, UserPlus, LogOut, MoreVertical } from 'lucide-react';
+import { MessageSquare, Users, Send, Clock, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 
@@ -32,7 +31,6 @@ const MessengerApp = () => {
     setSelectedRoomId,
     sendMessage,
     createChatRoom,
-    leaveChatRoom,
     sendFriendRequest,
     addFriendSimple
   } = useMessenger();
@@ -98,25 +96,6 @@ const MessengerApp = () => {
       });
     } finally {
       setAddingFriend(false);
-    }
-  };
-
-  // 채팅방 나가기
-  const handleLeaveChatRoom = async (roomId: string) => {
-    // 확인 대화상자 표시
-    if (!window.confirm('정말로 이 채팅방에서 나가시겠습니까?')) {
-      return;
-    }
-
-    const success = await leaveChatRoom(roomId);
-    if (success) {
-      // 성공적으로 나갔으면 선택된 채팅방 해제
-      if (selectedRoomId === roomId) {
-        setSelectedRoomId(null);
-      }
-      
-      // 추가: 채팅방이 즉시 목록에서 사라지도록 강제로 상태 업데이트
-      console.log('✅ 채팅방 나가기 UI 업데이트 완료');
     }
   };
 
@@ -353,41 +332,21 @@ const MessengerApp = () => {
           <>
             {/* 채팅방 헤더 */}
             <div className="p-4 border-b bg-card">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="" />
-                    <AvatarFallback>
-                      {getRoomDisplayName(selectedRoom).charAt(0).toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h3 className="font-medium">{getRoomDisplayName(selectedRoom)}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {selectedRoom.is_group 
-                        ? `${selectedRoom.participants?.length || 0}명 참여` 
-                        : '1:1 채팅'}
-                    </p>
-                  </div>
+              <div className="flex items-center space-x-3">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src="" />
+                  <AvatarFallback>
+                    {getRoomDisplayName(selectedRoom).charAt(0).toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <h3 className="font-medium">{getRoomDisplayName(selectedRoom)}</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {selectedRoom.is_group 
+                      ? `${selectedRoom.participants?.length || 0}명 참여` 
+                      : '1:1 채팅'}
+                  </p>
                 </div>
-                
-                {/* 채팅방 옵션 메뉴 */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem 
-                      onClick={() => handleLeaveChatRoom(selectedRoom.id)}
-                      className="text-red-600 focus:text-red-600"
-                    >
-                      <LogOut className="h-4 w-4 mr-2" />
-                      채팅방 나가기
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
               </div>
             </div>
 
